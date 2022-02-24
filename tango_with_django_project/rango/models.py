@@ -1,15 +1,21 @@
-from turtle import title
-from unicodedata import category
-from django import views
+
 from django.db import models
+from django.template.defaultfilters import slugify
+
 
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
     views = models.IntegerField(default=0)
     likes = models.IntegerField(default=0)
+    slug = models.SlugField(unique=True)
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Category, self).save(*args, **kwargs)
+        
     class Meta:
-        verbose_name_plural = 'Categories'
+        verbose_name_plural = 'categories'
         
     def __str__(self): 
         return self.name
@@ -23,9 +29,5 @@ class Page(models.Model):
     def __str__(self): 
         return self.title
     
-class PageAdmin(models.Model):
-    list_display = ('title', 'category', 'url')
-    
-    def __list__(self):
-        return  self.list_display
+
     
